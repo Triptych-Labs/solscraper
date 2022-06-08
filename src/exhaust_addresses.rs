@@ -1,18 +1,18 @@
+use crate::scraper::exhaust_transaction_signatures_for_address::get_genesis_transaction;
 use crate::types::*;
-use std::io;
 
-pub async fn get_genesis_transaction(msg: String) -> Result<String, io::Error> {
-    let ret = format!("hello {}", msg).to_string();
-    Ok(ret)
-}
-
-pub async fn start_exhaustion(addresses: Vec<String>) -> Vec<FutureResponse> {
+pub async fn start_exhaustion(network: String) -> Vec<FutureResponse> {
     let mut futures: Vec<FutureResponse> = vec![];
+
+    let addresses: Vec<String> = vec![
+        "8qwreJRtNaR1GA5odbV6tzyxwnTu2TStaRRZ7hqy1w4k".to_string(),
+        // "3wyvezHryrDnCefZi9dEyBevaLutf6vz69rzaxfxQ3Gv".to_string(),
+    ];
     for address in addresses {
-        let future = Box::pin(get_genesis_transaction(format!("{}", address).to_string()));
+        let future = Box::pin(get_genesis_transaction(network.clone(), address));
 
         futures.push(future);
     }
 
-    futures
+    return futures;
 }

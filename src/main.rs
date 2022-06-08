@@ -1,5 +1,5 @@
-use futures::executor::block_on;
 use futures::StreamExt;
+use std::io::Result;
 
 use crate::types::*;
 
@@ -10,17 +10,17 @@ pub mod scraper;
 pub mod solana;
 pub mod types;
 
-async fn executor() {
+#[tokio::main]
+async fn main() -> Result<()> {
     let mut futures: Vec<FutureResponse> = vec![];
 
-    let addresses: Vec<String> = vec!["aasd".to_string(), "sdfgsdfg".to_string()];
-    futures.append(&mut start_exhaustion(addresses).await);
+    futures
+        .append(&mut start_exhaustion("https://explorer-api.devnet.solana.com/".to_string()).await);
 
+    // process 5 at a time - batch 5 per
     let stream = futures::stream::iter(futures).buffer_unordered(5);
     let results = stream.collect::<Vec<_>>().await;
     println!("{:?}", results);
-}
 
-fn main() {
-    block_on(executor());
+    Ok(())
 }
