@@ -6,3 +6,4 @@ edition = "2021"
 
 [dependencies]
 futures = "0.3"
+solana-client = "1.10.24"
