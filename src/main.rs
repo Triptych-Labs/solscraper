@@ -1,25 +1,20 @@
 use futures::executor::block_on;
-use futures::future::join_all;
-use futures::{Future, StreamExt};
-use std::pin::Pin;
+use futures::StreamExt;
+
+use crate::types::*;
+
+use crate::exhaust_addresses::start_exhaustion;
 
 pub mod exhaust_addresses;
 pub mod scraper;
 pub mod solana;
-
-type HelloResponseFuture = dyn Future<Output = String>;
-type HelloResponse = Pin<Box<HelloResponseFuture>>;
-
-pub async fn say_hello(msg: String) -> String {
-    let ret = format!("hello {}", msg).to_string();
-    ret
-}
+pub mod types;
 
 async fn executor() {
-    let mut futures: Vec<HelloResponse> = vec![];
-    for i in 0..=19 {
-        futures.push(Box::pin(say_hello(format!("{}", i).to_string())));
-    }
+    let mut futures: Vec<FutureResponse> = vec![];
+
+    let addresses: Vec<String> = vec!["aasd".to_string(), "sdfgsdfg".to_string()];
+    futures.append(&mut start_exhaustion(addresses).await);
 
     let stream = futures::stream::iter(futures).buffer_unordered(5);
     let results = stream.collect::<Vec<_>>().await;
