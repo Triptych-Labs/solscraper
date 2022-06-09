@@ -14,11 +14,12 @@ pub mod types;
 async fn main() -> Result<()> {
     let mut futures: Vec<FutureResponse> = vec![];
 
-    futures
-        .append(&mut start_exhaustion("https://explorer-api.devnet.solana.com/".to_string()).await);
+    futures.append(
+        &mut start_exhaustion("https://explorer-api.mainnet-beta.solana.com/".to_string()).await,
+    );
 
     // process 5 at a time - batch 5 per
-    let stream = futures::stream::iter(futures).buffer_unordered(5);
+    let stream = futures::stream::iter(futures).buffer_unordered(50);
     let results = stream.collect::<Vec<_>>().await;
     println!("{:?}", results);
 
