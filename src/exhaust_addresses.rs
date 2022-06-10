@@ -1,4 +1,3 @@
-use crate::scraper::exhaust_transaction_signatures_for_address::decode_transfer_instruction;
 use crate::scraper::exhaust_transaction_signatures_for_address::get_genesis_transaction;
 use crate::types::*;
 use std::fs::File;
@@ -12,6 +11,10 @@ pub async fn start_exhaustion(network: String) -> Vec<FutureResponse> {
     let addresses: Vec<String> = serde_json::from_reader(file).unwrap();
 
     for address in addresses {
+        if Path::new(&format!("./db/{}.json", address).to_string()).exists() {
+            println!("{} exists!!", address);
+            continue;
+        }
         let future = Box::pin(get_genesis_transaction(network.clone(), address));
 
         futures.push(future);
